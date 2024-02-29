@@ -1,25 +1,58 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import Header from "./components/Header";
+import Body from "./components/Body";
+import { createBrowserRouter, Outlet } from "react-router-dom";
+import Aboutus from "./components/Aboutus";
+import Contactus from "./components/Contactus";
+import Errorelement from "./components/ErrorPage";
+import RestaraurantMenu from "./components/RestaurantMenu";
+import UserContext from "./utils/UserContext";
+import { Provider } from "react-redux";
+import appStore from "./utils/appStore";
+import CartItems from "./components/CartItems";
 
-function App() {
+const App = () => {
+  const [userName, setUserName] = useState("Default User");
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Provider store={appStore}>
+        <UserContext.Provider value={{ loggedInUser: userName, setUserName }}>
+          <Header />
+          <Outlet />
+        </UserContext.Provider>
+      </Provider>
     </div>
   );
-}
+};
+export const AppRouter = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "/",
+        element: <Body />,
+      },
+      {
+        path: "/aboutus",
+        element: <Aboutus />,
+      },
+      {
+        path: "/contactus",
+        element: <Contactus />,
+      },
+      {
+        path: "/restaurantmenu/:id",
+        element: <RestaraurantMenu />,
+      },
+      {
+        path: "/cart",
+        element: <CartItems/>,
+      }
+    ],
+    errorElement: <Errorelement />,
+  },
+]);
 
 export default App;
